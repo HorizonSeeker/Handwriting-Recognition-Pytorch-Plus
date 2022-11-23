@@ -86,3 +86,7 @@ def main():
 
     for epoch in range(config.NUM_EPOCHS):
         train_one_epoch(train_loader, model, optimizer, criterion, config.DEVICE)
+
+
+if __name__ == "__main__":
+    main()
