@@ -1,10 +1,11 @@
 import os
-import config
-import torch
 import cv2
+import torch
 import numpy as np
+import pandas as pd
 from torch.utils.data import Dataset
 
+import config
 
 class HRDataset(Dataset):
     def __init__(self, dataset, encoder, mode='train'):
@@ -18,6 +19,7 @@ class HRDataset(Dataset):
 
         self.data = dataset
         self.encoder = encoder
+        self.mode = mode
 
     def __len__(self):
         return self.data.shape[0]
@@ -28,14 +30,29 @@ class HRDataset(Dataset):
                            cv2.IMREAD_GRAYSCALE)
         image = cv2.resize(image, config.IMAGE_SIZE,
                            interpolation=cv2.INTER_AREA)
+
+        # Data augmentation (chỉ áp dụng cho tập train)
+        if self.mode == 'train':
+            # Xoay ngẫu nhiên (-10 đến 10 độ)
+            angle = np.random.uniform(-10, 10)
+            M = cv2.getRotationMatrix2D(
+                (image.shape[1]/2, image.shape[0]/2), angle, 1)
+            image = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+            # Thay đổi độ sáng ngẫu nhiên
+            brightness = np.random.uniform(0.8, 1.2)
+            image = image * brightness
+            image = np.clip(image, 0, 255).astype(np.uint8)
+            # Thêm nhiễu Gaussian
+            noise = np.random.normal(0, 10, image.shape).astype(np.uint8)
+            image = cv2.add(image, noise)
+            image = np.clip(image, 0, 255).astype(np.uint8)
+
         image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE) / 255.
 
         image = np.expand_dims(image, 0)
 
-        label = self.data.iloc[index]['IDENTITY']
-        label = self.encoder(label)
+        label = self.encoder(self.data.iloc[index]['IDENTITY'])
+        label = torch.LongTensor(label)  # Sửa từ torch.IntTensor thành torch.LongTensor
 
-        image = torch.as_tensor(image, dtype=torch.float32)
-        label = torch.as_tensor(label, dtype=torch.int32)
+        return torch.FloatTensor(image), label
 
-        return image, label

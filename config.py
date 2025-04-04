@@ -2,8 +2,8 @@ import torch
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 128
-NUM_EPOCHS = 10
-LEARNING_RATE = 1e-4
+NUM_EPOCHS = 100
+LEARNING_RATE = 1e-3  # Tăng từ 1e-4 lên 1e-3 để học nhanh hơn
 TRAIN_IMAGES_DIR = 'dataset/train_v2/train'
 VALID_IMAGES_DIR = 'dataset/validation_v2/validation'
 TEST_IMAGES_DIR = 'dataset/test_v2/test'
