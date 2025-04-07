@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 
 # Đường dẫn lưu biểu đồ
-chart_folder = "my_charts"
+chart_folder = "./figures"  # Thay đổi thành thư mục "figures" theo ví dụ của cô
 if not os.path.exists(chart_folder):
     os.makedirs(chart_folder)
 
@@ -41,10 +41,37 @@ train_accuracy = history["train_accuracy"]
 val_accuracy = history["val_accuracy"]
 test_accuracy = test_results["test_accuracy"]
 
-# Vẽ biểu đồ
+# Vẽ và lưu biểu đồ Loss
 plt.figure(figsize=(12, 5))
+plt.plot(epochs, train_loss, "b*-", label="Training")
+plt.plot(epochs, val_loss, "r*-", label="Validation")
+plt.xlabel("epoch")
+plt.ylabel("loss")
+plt.title("Loss vs. No. of epochs")
+plt.legend()
+plt.grid(True)
+loss_save_path = os.path.join(chart_folder, "loss_chart_iou.png")  # Tên file theo ví dụ của cô
+plt.savefig(loss_save_path, dpi=300)
+plt.close()
+print(f"Đã lưu biểu đồ Loss tại: {loss_save_path}")
 
-# Biểu đồ Loss
+# Vẽ và lưu biểu đồ Accuracy
+plt.figure(figsize=(12, 5))
+plt.plot(epochs, train_accuracy, "b*-", label="Training")
+plt.plot(epochs, val_accuracy, "r*-", label="Validation")
+plt.axhline(y=test_accuracy, color="g", linestyle="--", label=f"Test Accuracy ({test_accuracy:.4f})")
+plt.xlabel("epoch")
+plt.ylabel("accuracy")
+plt.title("Accuracy vs. No. of epochs")
+plt.legend()
+plt.grid(True)
+accuracy_save_path = os.path.join(chart_folder, "Accuracy.png")  # Tên file theo yêu cầu của cô
+plt.savefig(accuracy_save_path, dpi=300)
+plt.close()
+print(f"Đã lưu biểu đồ Accuracy tại: {accuracy_save_path}")
+
+# Vẽ và lưu biểu đồ kết hợp (nếu cần)
+plt.figure(figsize=(12, 5))
 plt.subplot(1, 2, 1)
 plt.plot(epochs, train_loss, "b*-", label="Training")
 plt.plot(epochs, val_loss, "r*-", label="Validation")
@@ -54,7 +81,6 @@ plt.title("Loss vs. No. of epochs")
 plt.legend()
 plt.grid(True)
 
-# Biểu đồ Accuracy
 plt.subplot(1, 2, 2)
 plt.plot(epochs, train_accuracy, "b*-", label="Training")
 plt.plot(epochs, val_accuracy, "r*-", label="Validation")
@@ -65,7 +91,8 @@ plt.title("Accuracy vs. No. of epochs")
 plt.legend()
 plt.grid(True)
 
-# Lưu biểu đồ
 plt.tight_layout()
-plt.savefig(os.path.join(chart_folder, "training_and_test_charts.png"))
-plt.show()
+combined_save_path = os.path.join(chart_folder, "training_and_test_charts.png")
+plt.savefig(combined_save_path, dpi=300)
+plt.close()  # Thêm close để tránh chồng lấp
+print(f"Đã lưu biểu đồ kết hợp tại: {combined_save_path}")

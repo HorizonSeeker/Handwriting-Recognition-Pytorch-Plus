@@ -1,7 +1,7 @@
 import torch
-import config
 import torch.nn as nn
 
+config = type('Config', (), {'DEVICE': 'cuda' if torch.cuda.is_available() else 'cpu'})()
 
 class FeatureExtractor(nn.Module):
     def __init__(self):
@@ -19,7 +19,7 @@ class FeatureExtractor(nn.Module):
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
 
-        self.fc = nn.Linear(1536, 64)  # Sửa từ 768 thành 1536
+        self.fc = nn.Linear(1536, 64)  # Giữ nguyên 1536 như checkpoint
 
     def forward(self, images):
         outputs = self.maxpool(self.relu(self.bn1(self.conv1(images))))

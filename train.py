@@ -118,6 +118,10 @@ def train_one_epoch(loader, model, optimizer, criterion, device, epoch):
 
 
 def save_checkpoint(model, optimizer, scheduler, epoch, history, filename="checkpoint.pth"):
+    # Xóa tất cả checkpoint cũ (trừ best_checkpoint)
+    for f in os.listdir('.'):
+        if f.startswith('checkpoint') and f.endswith('.pth') and f != 'best_checkpoint.pth':
+            os.remove(f)
     if os.path.exists(filename):
         os.remove(filename)
 
